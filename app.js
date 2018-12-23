@@ -39,7 +39,7 @@ async function main() {
 
   await Promise.all([
     await amazon.changeToUSAddress(browser),
-    await keywordtool.login(browser),
+    // await keywordtool.login(browser),
     await merchantwords.login(browser)
   ]);
 
@@ -50,6 +50,8 @@ async function main() {
   const keywords = contents.map(x => {
     return x.field1;
   });
+
+  const keywordtoolResult = await keywordtool.getResults(keywords);
 
   try {
     await fsp.unlink(resultPath)
@@ -97,19 +99,26 @@ async function main() {
     });
 
     let [
-      keywordIOVolume,
+      // keywordIOVolume,
       merchantVolume,
       total,
       totalPrime
     ] = await Promise.all([
-      keywordtool.searchVolume(browser, keyword),
+      // keywordtool.searchVolume(browser, keyword),
       merchantwords.searchVolume(browser, keyword),
       amazon.totalProducts(browser, keyword),
       amazon.totalPrimeProducts(browser, keyword)
     ]);
+    
+    let kwioLastMonth = 0;
+    let kwioThisMonth = 0;
+    try {
+      kwioLastMonth = keywordtoolResult[keyword]['m2'];
+      kwioThisMonth = keywordtoolResult[keyword]['m1'];
+    } catch(e) {
+      // do nothing
+    }
 
-    let kwioLastMonth = keywordIOVolume.lastMonth;
-    let kwioThisMonth = keywordIOVolume.thisMonth;
     let keywordIORatio = 0;
     let merchantRatio = 0;
     let primeRatio = 0;
