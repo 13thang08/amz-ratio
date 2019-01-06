@@ -9,6 +9,8 @@ const ProgressBar = require("progress");
 const keywordtool = require("./lib/keywordtool");
 const merchantwords = require("./lib/merchantwords");
 const amazon = require("./lib/amazon");
+const util = require('util');
+const sleep = util.promisify(setTimeout);
 
 const csvtojson = require("csvtojson");
 
@@ -93,6 +95,7 @@ async function main() {
     }
   );
   for (let i = 0; i < keywords.length; i++) {
+    await sleep(config.interval);
     let keyword = keywords[i];
     bar.tick({
       file: keyword
